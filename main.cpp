@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int f(int node/*srvice variables:*/,int endNode, vector<vector<pair<int,int> > >& g, vector<int>& minLen, vector<int>& path,int inf,int iteration);
+int f(int node/*srvice variables:*/,int endNode, vector<vector<pair<int,int> > >& g, vector<int>& minLen, vector<int>& child,vector<bool>& memory,int inf,int iteration);
 
 int main()
 {
@@ -15,6 +15,7 @@ int main()
     const int inf = INT_MAX / 2;
     vector<int> minLen;
     vector<int> child;
+    vector<bool> memory;
     vector<vector<pair<int,int> > > g;
     int endNode;
     int startNode;
@@ -37,10 +38,11 @@ int main()
     }
     minLen.resize(numOfNodes,inf);
     child.resize(numOfNodes,-1);
+    memory.resize(numOfNodes,false);
     //end
 
     //output
-    cout<<f(startNode,endNode,g,minLen,child,inf,0)<<endl;
+    cout<<f(startNode,endNode,g,minLen,child,memory,inf,0)<<endl;//начало алгоритма  вывод результата
     int current=startNode;
     while(current!=endNode){
         cout<<current<<"->";
@@ -53,7 +55,11 @@ int main()
     return 0;
 }
 
-int f(int node/*srvice variables:*/,int endNode, vector<vector<pair<int,int> > >& g, vector<int>& minLen, vector<int>& child,int inf,int iteration){
+int f(int node/*srvice variables:*/,int endNode, vector<vector<pair<int,int> > >& g, vector<int>& minLen, vector<int>& child,vector<bool>& memory,int inf,int iteration){
+
+    if(memory[node]) return minLen[node];
+
+    memory[node]=true;
 
     if(node==endNode) return 0; //вернуть 0 если нашли конечный узел
 
@@ -64,7 +70,7 @@ int f(int node/*srvice variables:*/,int endNode, vector<vector<pair<int,int> > >
     for(size_t i=0; i<g[node].size(); i++){
 
         int oldm = m;
-        m = min<int>(m, f(g[node][i].first,endNode,g,minLen,child,inf,iteration+1)+g[node][i].second);
+        m = min<int>(m, f(g[node][i].first,endNode,g,minLen,child,memory,inf,iteration+1)+g[node][i].second);
         if(m<oldm) child[node]=g[node][i].first;
 
     }
